@@ -5,8 +5,8 @@ import "../assets/css/Home.css";
 function Home(props) {
     return (
         <div className="home-cont border">
-            <Sidebar/>
-            <Display/>
+            <Sidebar userId={props.userId}/>
+            <Display userId={props.userId}/>
         </div>
     )
 }

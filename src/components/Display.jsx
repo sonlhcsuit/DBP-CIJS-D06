@@ -2,9 +2,9 @@ import '../assets/css/Display.css';
 import { TodoList } from "../components/TodoList";
 function Display(props) {
     return (
-        <div className="border display-cont" >
+        <div className="display-cont" >
             {
-                <TodoList/>
+                <TodoList userId={props.userId} />
             }
         </div>
     )

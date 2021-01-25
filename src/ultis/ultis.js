@@ -62,38 +62,56 @@ export async function signUp(userInformation) {
     }
 }
 
-export async function addTodo(todoInfomation) {
-    try {
-        const { ownerId, title, content } = todoInfomation
-        const todoId = await db.collection('todos').add({
-            ownerId:ownerId,
-            title:title,
-            content:content
-        }).then(data=>{
-            return data.id
+export async function SignInUltis(user) {
+    // console.log(user)
+    const { username, password } = user
+    return await db.collection('users').where('username', '==', username).limit(1).get()
+        .then(querySnapshot => {
+            const data = []
+            querySnapshot.forEach(
+                (doc) => {
+                    return data.push({
+                        userId: doc.id,
+                        ...doc.data()
+                    })
+                }
+            )
+            if (data[0]['password'] == password) {
+                return data[0]['userId']
+            } else {
+                throw new Error('Login Fail')
+
+            }
         })
-        console.log(todoId)
-    } catch (err) {
-        throw err
-    }
+
 }
 
-export async function editTodo(todoInfomation) {
-    try {
-        const { title, content,todoId } = todoInfomation
-        await db.collection('todos').doc(todoId).set({
-            title:title,
-            content:content
-        },{
-            merge:true
-        })
-        return 'Update successful!'
-    } catch (err) {
-        throw err
-    }
+export async function addTodo(userId, todo) {
+    const {
+        content,
+        title
+    } = todo
+    
+    console.log({
+        content: content,
+        title: title,
+        userId: userId,
+        isComplete: false,
+        created: new Date().toDateString()
+    })
+    db.collection('todos').add({
+        content: content,
+        title: title,
+        userId: userId,
+        isComplete: false,
+        created: new Date().toDateString()
+    })
 }
-export async function getTodo(userId){
-    return await db.collection('todos').where('ownerId','==',userId).get()
+
+export async function getTodo(userId) {
+    console.log(userId)
+    return await db.collection('todos').where('userId','==',userId)
+    .get()
     .then(querySnapshot=>{
         const todos = []
         querySnapshot.forEach(doc=>{
